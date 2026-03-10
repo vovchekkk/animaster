@@ -41,9 +41,13 @@ function animaster() {
         element.style.transform = getTransform(null, ratio);
     }
 
-    function moveAndHide(element, duration, translation) {
-        move(element, duration * 2 / 5, translation);
-        fadeOut(element, duration * 3 / 5);
+    async function moveAndHide(element, duration, translation) {
+        const moveDuration = duration * 2 / 5;
+        const hideDuration = duration * 3 / 5;
+
+        move(element, moveDuration, translation);
+        await wait(moveDuration);
+        fadeOut(element, hideDuration);
     }
 
     async function showAndHide(element, duration) {
