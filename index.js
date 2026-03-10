@@ -93,14 +93,44 @@ function animaster() {
 
     const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+    function addMove(duration, translation) {
+        const step = {
+            op_name: 'move',
+            duration: duration,
+            args: {translation : translation},
+        }
+        this._steps.push(step);
+        return this;
+    }
+
+    function play(element){
+        for (let step of this._steps) {
+            if (step.op_name === 'move'){
+                this.move(element, step.duration, step.args.translation);
+            }
+            else if (step.op_name === 'scale'){
+                this.scale(element, step.duration, step.args.ratio);
+            }
+            else if (step.op_name === 'fadeIn'){
+                this.fadeIn(element, step.duration);
+            }
+            else if (step.op_name === 'fadeOut'){
+                this.fadeOut(element, step.duration);
+            }
+        }
+    }
+
     return {
+        _steps: [],
         fadeIn: fadeIn,
         fadeOut: fadeOut,
         move: move,
         scale: scale,
         moveAndHide: moveAndHide,
         showAndHide: showAndHide,
-        heartBeating : heartBeating
+        heartBeating : heartBeating,
+        addMove: addMove,
+        play: play,
     }
 }
 
