@@ -73,9 +73,9 @@ function animaster() {
     }
 
     async function showAndHide(element, duration) {
-        this.addFadeIn(duration * 1 / 3).play();
+        this.addFadeIn(duration * 1 / 3).play(element);
         await wait(duration * 1 / 3);
-        this.addFadeOut(duration * 1 / 3).play()
+        this.addFadeOut(duration * 1 / 3).play(element)
     }
 
     function heartBeating(element) {
