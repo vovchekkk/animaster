@@ -56,16 +56,16 @@ function animaster() {
     function resetMoveAndScale(element) {
         element.style.transitionDuration = null;
         element.style.transform = null;
-        fadeIn(element);
+        addFadeIn(element).play();
     }
 
     async function moveAndHide(element, duration, translation) {
         const moveDuration = duration * 2 / 5;
         const hideDuration = duration * 3 / 5;
 
-        move(element, moveDuration, translation);
+        addMove(element, moveDuration, translation).play();
         await wait(moveDuration);
-        fadeOut(element, hideDuration);
+        addFadeOut(element, hideDuration).play();
 
         return {
             reset() {
@@ -75,16 +75,16 @@ function animaster() {
     }
 
     async function showAndHide(element, duration) {
-        fadeIn(element, duration * 1 / 3);
+        addFadeIn(element, duration * 1 / 3).play();
         await wait(duration * 1 / 3);
-        fadeOut(element, duration * 1 / 3)
+        addFadeOut(element, duration * 1 / 3).play()
     }
 
     function heartBeating(element) {
         const beat = () => {
-            scale(element, 500, 1.4);
+            addScale(element, 500, 1.4).play();
             setTimeout(() => {
-                scale(element, 500, 1);
+                addScale(element, 500, 1).play();
             }, 500);
         };
 
@@ -183,25 +183,25 @@ async function addListeners() {
     document.getElementById('fadeInPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeInBlock');
-            animaster().fadeIn(block, 5000);
+            animaster().addFadeIn(block, 5000).play();
         });
 
     document.getElementById('fadeOutPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeOutBlock');
-            animaster().fadeOut(block, 5000);
+            animaster().addFadeOut(block, 5000).play();
         });
 
     document.getElementById('movePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('moveBlock');
-            animaster().move(block, 1000, {x: 100, y: 10});
+            animaster().addMove(block, 1000, {x: 100, y: 10}).play();
         });
 
     document.getElementById('scalePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('scaleBlock');
-            animaster().scale(block, 1000, 1.25);
+            animaster().addScale(block, 1000, 1.25).play();
         });
 
     document.getElementById('moveAndHidePlay')
