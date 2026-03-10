@@ -98,12 +98,12 @@ function animaster() {
         }
     }
 
-    function addScale(duration, scale) {
+    function addScale(duration, ratio) {
         this._steps.push({
             op_name: 'scale',
             duration: duration,
             args: {
-                scale: scale
+                ratio: ratio
             }
         })
 
@@ -169,6 +169,9 @@ function animaster() {
         showAndHide: showAndHide,
         heartBeating : heartBeating,
         addMove: addMove,
+        addScale : addScale,
+        addFadeIn: addFadeIn,
+        addFadeOut: addFadeOut,
         play: play,
     }
 }
