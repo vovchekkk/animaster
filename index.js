@@ -53,10 +53,10 @@ function animaster() {
         element.style.transform = getTransform(null, ratio);
     }
 
-    function resetMoveAndScale(element) {
+    function resetMoveAndHide(element) {
         element.style.transitionDuration = null;
         element.style.transform = null;
-        addFadeIn(0).play();
+        this.addFadeIn(0).play(element);
     }
 
     async function moveAndHide(element, duration, translation) {
@@ -68,7 +68,7 @@ function animaster() {
         this.addFadeOut(hideDuration).play(element);
 
         return {
-            reset: () => resetMoveAndScale(element)
+            reset: resetMoveAndHide.bind(this, element)
         };
     }
 
