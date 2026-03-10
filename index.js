@@ -56,6 +56,7 @@ function animaster() {
     function resetMoveAndScale(element) {
         element.style.transitionDuration = null;
         element.style.transform = null;
+        fadeIn(element);
     }
 
     async function moveAndHide(element, duration, translation) {
@@ -65,6 +66,12 @@ function animaster() {
         move(element, moveDuration, translation);
         await wait(moveDuration);
         fadeOut(element, hideDuration);
+
+        return {
+            reset() {
+                resetMoveAndScale(element);
+            }
+        }
     }
 
     async function showAndHide(element, duration) {
@@ -89,6 +96,38 @@ function animaster() {
                 clearInterval(interval);
             }
         }
+    }
+
+    function addScale(duration, scale) {
+        this._steps.push({
+            op_name: 'scale',
+            duration: duration,
+            args: {
+                scale: scale
+            }
+        })
+
+        return this;
+    }
+
+    function addFadeIn(duration) {
+        this._steps.push({
+            op_name: 'fadeIn',
+            duration: duration,
+            args: {}
+        })
+
+        return this;
+    }
+
+    function addFadeOut(duration) {
+        this._steps.push({
+            op_name: 'fadeOut',
+            duration: duration,
+            args: {}
+        })
+
+        return this;
     }
 
     const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -134,8 +173,9 @@ function animaster() {
     }
 }
 
-function addListeners() {
+async function addListeners() {
     let heartBeater;
+    let moveAndHider;
 
     document.getElementById('fadeInPlay')
         .addEventListener('click', function () {
@@ -162,9 +202,15 @@ function addListeners() {
         });
 
     document.getElementById('moveAndHidePlay')
-        .addEventListener('click', function () {
+        .addEventListener('click', async function () {
             const block = document.getElementById('moveAndHideBlock');
-            animaster().moveAndHide(block, 1000, {x: 100, y: 20});
+            moveAndHider = await animaster().moveAndHide(block, 1000, {x: 100, y: 20});
+        })
+
+    document.getElementById('moveAndHideReset')
+        .addEventListener('click', function () {
+            if (moveAndHider)
+                moveAndHider.reset();
         })
 
     document.getElementById('showAndHidePlay')
