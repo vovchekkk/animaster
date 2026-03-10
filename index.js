@@ -12,7 +12,7 @@ function animaster() {
         element.classList.add('show');
     }
 
-    function resetFadeIn(element){
+    function resetFadeIn(element) {
         element.style.transitionDuration = null;
         element.classList.add('hide');
         element.classList.remove('show');
@@ -63,9 +63,10 @@ function animaster() {
         const moveDuration = duration * 2 / 5;
         const hideDuration = duration * 3 / 5;
 
-        this.addMove(moveDuration, translation).play(element);
-        await wait(moveDuration);
-        this.addFadeOut(hideDuration).play(element);
+        this.addMove(moveDuration, translation)
+            .addDelay(moveDuration)
+            .addFadeOut(hideDuration)
+            .play(element);
 
         return {
             reset: resetMoveAndHide.bind(this, element)
@@ -73,18 +74,20 @@ function animaster() {
     }
 
     async function showAndHide(element, duration) {
-        this.addFadeIn(duration * 1 / 3).play(element);
-        await wait(duration * 1 / 3);
-        this.addFadeOut(duration * 1 / 3).play(element)
+        this.addFadeIn(duration * 1 / 3)
+            .addDelay(duration)
+            .addFadeOut(duration * 1 / 3)
+            .play(element)
     }
 
     function heartBeating(element) {
         const self = this;
+
         const beat = () => {
-            self.addScale(500, 1.4).play(element);
-            setTimeout(() => {
-                self.addScale(500, 1).play(element);
-            }, 500);
+            self.addScale(500, 1.4)
+                .addDelay(500)
+                .addScale(500, 1)
+                .play(element);
         };
 
         const interval = setInterval(beat, 1000);
@@ -93,40 +96,47 @@ function animaster() {
         return {
             stop() {
                 clearInterval(interval);
+                self.addScale(0, 1).play(element);
             }
         };
     }
 
+    function addDelay(duration) {
+        this._steps.push({op_name: 'addDelay', duration, args: {}});
+        return this;
+    }
+
     function addScale(duration, ratio) {
-        this._steps.push({ op_name: 'scale', duration, args: { ratio } });
+        this._steps.push({op_name: 'scale', duration, args: {ratio}});
         return this;
     }
 
     function addFadeIn(duration) {
-        this._steps.push({ op_name: 'fadeIn', duration, args: {} });
+        this._steps.push({op_name: 'fadeIn', duration, args: {}});
         return this;
     }
 
     function addFadeOut(duration) {
-        this._steps.push({ op_name: 'fadeOut', duration, args: {} });
+        this._steps.push({op_name: 'fadeOut', duration, args: {}});
         return this;
     }
 
     const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
     function addMove(duration, translation) {
-        this._steps.push({ op_name: 'move', duration, args: { translation } });
+        this._steps.push({op_name: 'move', duration, args: {translation}});
         return this;
     }
 
-    function play(element) {
-        this._steps.forEach(step => {
+    async function play(element) {
+        for (const step of this._steps) {
             // Вызываем базовые функции, используя данные из объекта шага
             if (step.op_name === 'move') move(element, step.duration, step.args.translation);
             if (step.op_name === 'scale') scale(element, step.duration, step.args.ratio);
             if (step.op_name === 'fadeIn') fadeIn(element, step.duration);
             if (step.op_name === 'fadeOut') fadeOut(element, step.duration);
-        });
+            if (step.op_name === 'addDelay') await wait(step.duration);
+        }
         this._steps = []; // Очищаем очередь после запуска
     }
 
@@ -138,11 +148,12 @@ function animaster() {
         scale: scale,
         moveAndHide: moveAndHide,
         showAndHide: showAndHide,
-        heartBeating : heartBeating,
+        heartBeating: heartBeating,
         addMove: addMove,
-        addScale : addScale,
+        addScale: addScale,
         addFadeIn: addFadeIn,
         addFadeOut: addFadeOut,
+        addDelay: addDelay,
         play: play,
     }
 }
