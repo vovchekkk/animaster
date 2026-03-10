@@ -157,6 +157,7 @@ function animaster() {
                 this.fadeOut(element, step.duration);
             }
         }
+        this._steps = []
     }
 
     return {
