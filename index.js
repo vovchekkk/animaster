@@ -98,6 +98,38 @@ function animaster() {
         }
     }
 
+    function addScale(duration, scale) {
+        this._steps.push({
+            op_name: 'scale',
+            duration: duration,
+            args: {
+                scale: scale
+            }
+        })
+
+        return this;
+    }
+
+    function addFadeIn(duration) {
+        this._steps.push({
+            op_name: 'fadeIn',
+            duration: duration,
+            args: {}
+        })
+
+        return this;
+    }
+
+    function addFadeOut(duration) {
+        this._steps.push({
+            op_name: 'fadeOut',
+            duration: duration,
+            args: {}
+        })
+
+        return this;
+    }
+
     const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
     return {
