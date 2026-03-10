@@ -81,24 +81,9 @@ function animaster() {
     }
 
     function heartBeating(element) {
-        const self = this;
-
-        const beat = () => {
-            self.addScale(500, 1.4)
-                .addDelay(500)
-                .addScale(500, 1)
-                .play(element);
-        };
-
-        const interval = setInterval(beat, 1000);
-        beat();
-
-        return {
-            stop() {
-                clearInterval(interval);
-                self.addScale(0, 1).play(element);
-            }
-        };
+        return this.addScale(500, 1.4)
+            .addScale(500, 1)
+            .play(element, true);
     }
 
     function addDelay(duration) {
@@ -127,17 +112,42 @@ function animaster() {
         this._steps.push({op_name: 'move', duration, args: {translation}});
         return this;
     }
+    
+    function play(element, cycled) {
+        let isRunning = { value: true }; // Используем объект для ссылки
+        const savedSteps = [...this._steps];
+        this._steps = [];
 
-    async function play(element) {
-        for (const step of this._steps) {
-            // Вызываем базовые функции, используя данные из объекта шага
-            if (step.op_name === 'move') move(element, step.duration, step.args.translation);
-            if (step.op_name === 'scale') scale(element, step.duration, step.args.ratio);
-            if (step.op_name === 'fadeIn') fadeIn(element, step.duration);
-            if (step.op_name === 'fadeOut') fadeOut(element, step.duration);
-            if (step.op_name === 'addDelay') await wait(step.duration);
-        }
-        this._steps = []; // Очищаем очередь после запуска
+        const execute = async () => {
+            for (const step of savedSteps) {
+                if (!isRunning.value) return;
+
+                if (step.op_name === 'move') move(element, step.duration, step.args.translation);
+                if (step.op_name === 'scale') scale(element, step.duration, step.args.ratio);
+                if (step.op_name === 'fadeIn') fadeIn(element, step.duration);
+                if (step.op_name === 'fadeOut') fadeOut(element, step.duration);
+
+                await wait(step.duration);
+            }
+        };
+
+        const run = async () => {
+            if (cycled) {
+                while (isRunning.value) {
+                    await execute();
+                }
+            } else {
+                await execute();
+            }
+        };
+
+        run();
+
+        return {
+            stop() {
+                isRunning.value = false;
+            }
+        };
     }
 
     return {
