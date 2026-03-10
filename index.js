@@ -114,7 +114,7 @@ function animaster() {
     }
 
     function play(element, cycled) {
-        let isRunning = {value: true}; // Используем объект для ссылки
+        let isRunning = {value: true};
         const savedSteps = [...this._steps];
         this._steps = [];
 
