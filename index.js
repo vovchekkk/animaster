@@ -64,8 +64,14 @@ function animaster() {
             }, 500);
         };
 
-        beat(); // Запускаем первый раз
-        return setInterval(beat, 1000);
+        const interval = setInterval(beat, 1000)
+        beat();
+
+        return {
+            stop() {
+                clearInterval(interval);
+            }
+        }
     }
 
     const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -82,6 +88,8 @@ function animaster() {
 }
 
 function addListeners() {
+    let heartBeater;
+
     document.getElementById('fadeInPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeInBlock');
@@ -121,7 +129,13 @@ function addListeners() {
     document.getElementById('heartBeatingPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('heartBeatingBlock');
-            animaster().heartBeating(block);
+            heartBeater = animaster().heartBeating(block);
+        })
+
+    document.getElementById('heartBeatingStop')
+        .addEventListener('click', function () {
+            if (heartBeater)
+                heartBeater.stop();
         })
 }
 
