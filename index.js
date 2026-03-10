@@ -180,13 +180,13 @@ async function addListeners() {
     document.getElementById('fadeInPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeInBlock');
-            animaster().addFadeIn(block, 5000).play();
+            animaster().addFadeIn(5000).play();
         });
 
     document.getElementById('fadeOutPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeOutBlock');
-            animaster().addFadeOut(block, 5000).play();
+            animaster().addFadeOut(5000).play();
         });
 
     document.getElementById('movePlay')
@@ -198,7 +198,7 @@ async function addListeners() {
     document.getElementById('scalePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('scaleBlock');
-            animaster().addScale(block, 1000, 1.25).play();
+            animaster().addScale(1000, 1.25).play();
         });
 
     document.getElementById('moveAndHidePlay')
